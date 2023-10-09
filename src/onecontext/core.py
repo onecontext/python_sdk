@@ -50,6 +50,12 @@ class KnowledgeBase:
     def delete(self) -> None:
         api.delete(urls.knowledge_base(self.name))
 
+    @property
+    def is_synced(self):
+        if self.sync_status is None:
+            self.get_info()
+        return self.sync_status == 'SYNCED'
+
 
 def list_knowledge_bases() -> List[KnowledgeBase]:
     knowledge_base_dicts = api.get(urls.knowledge_base())

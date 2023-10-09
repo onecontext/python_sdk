@@ -9,12 +9,12 @@ import requests
 class ServerError(Exception):
     ...
 
-
 class ConfigurationError(Exception):
     ...
 
 @dataclass
 class URLS:
+
     base_url: str = os.environ.get("ONECONTEXT_URL")
 
     def _join_base(self, url: str) -> str:
@@ -39,7 +39,7 @@ class URLS:
 class ApiClient:
     def __init__(self, api_key: Optional[str] = None) -> None:
         if api_key is None:
-            self.api_key = os.environ.get("CONTEXT_API_KEY")
+            self.api_key = os.environ.get("ONECONTEXT_API_KEY")
 
         if self.api_key is None:
             msg = "CONTEXT_API_KEY is not set in environment or pass as an argument"

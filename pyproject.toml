@@ -38,6 +38,9 @@ path = "src/onecontext/__about__.py"
 dependencies = [
   "coverage[toml]>=6.5",
   "pytest",
+  "ptpython",
+  "IPython",
+  "pudb"
 ]
 [tool.hatch.envs.default.scripts]
 test = "pytest {args:tests}"
