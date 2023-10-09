@@ -86,5 +86,3 @@ documents = retriver.query("what is onecontext?")
 
 ```
 
-
-
