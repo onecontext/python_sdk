@@ -25,7 +25,7 @@ pip install onecontext
 
     export ONECONTEXT_API_KEY="YOUR_API_KEY"
 
-You can get the api key for free here:
+You can get the api key for free at  [OneContext](www.onecontext.ai)
 
 ## Usage
 
@@ -68,10 +68,10 @@ for file_path in files_to_upload:
 Once the files have been uploaded they will be processed, chunked
 and embedded by OneContext.
 
-You can check the satus of the sync like so:
+Check sync status:
 
 ```python
-my_knowledge_base.is_synced
+print(my_knowledge_base.is_synced)
 ```
 
 ### Query the Knowledge Base

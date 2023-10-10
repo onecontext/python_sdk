@@ -52,8 +52,7 @@ class KnowledgeBase:
 
     @property
     def is_synced(self):
-        if self.sync_status is None:
-            self.get_info()
+        self.get_info()
         return self.sync_status == 'SYNCED'
 
 
