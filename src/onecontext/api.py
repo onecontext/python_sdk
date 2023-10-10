@@ -15,7 +15,7 @@ class ConfigurationError(Exception):
 @dataclass
 class URLS:
 
-    base_url: str = os.environ.get("ONECONTEXT_URL")
+    base_url: str = "https://api.onecontext.ai"
 
     def _join_base(self, url: str) -> str:
         return urljoin(self.base_url, url)

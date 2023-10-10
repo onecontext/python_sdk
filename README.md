@@ -85,4 +85,3 @@ retriver = Retriever(knowledge_bases=[my_knowledge_base])
 documents = retriver.query("what is onecontext?")
 
 ```
-
