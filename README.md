@@ -65,7 +65,7 @@ for file_path in files_to_upload:
     my_knowledge_base.upload_file(file_path)
 ```
 
-Once the files have been uploaded they will be preprocedded, chunked
+Once the files have been uploaded they will be processed, chunked
 and embedded by OneContext.
 
 You can check the satus of the sync like so:
