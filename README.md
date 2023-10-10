@@ -32,7 +32,7 @@ You can get the api key for free here:
 ### Create a Knowledge Base:
 
 ```python
-from context import KnowledgeBase
+from onecontext import KnowledgeBase
 
 my_knowledge_base = KnowledgeBase("my_knowledge_base")
 
