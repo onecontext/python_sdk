@@ -9,12 +9,13 @@ import requests
 class ServerError(Exception):
     ...
 
+
 class ConfigurationError(Exception):
     ...
 
+
 @dataclass
 class URLS:
-
     base_url: str = "https://api.onecontext.ai"
 
     def _join_base(self, url: str) -> str:

@@ -73,20 +73,9 @@ from pathlib import Path
 
 my_knowledge_base = KnowledgeBase("my_knowledge_base")
 
-folder = "/path/to/local_folder"
+directory = "/path/to/local_folder"
 
-file_types = (".pdf", ".docx", ".txt", ".md")
-
-files = []
-
-# Get all file paths in the specified directory
-all_files = [os.path.join(folder, file) for file in os.listdir(folder)]
-
-# Filter the files based on the supported extension
-files_to_upload = [file for file in all_files if file.endswith(file_types)]
-
-for file_path in files_to_upload:
-    my_knowledge_base.upload_file(file_path)
+my_knowledge_base.upload_from_directory((folder)
 ```
 
 Once the files have been uploaded they will be processed, chunked

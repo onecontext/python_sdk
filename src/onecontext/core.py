@@ -1,11 +1,17 @@
-from typing import Any, Dict, List, Optional, Union
+import os
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any, Dict, List, Optional, Union
+
 import requests
+
 from onecontext.api import URLS, ApiClient
 
 api = ApiClient()
 urls = URLS()
+
+SUPPORTED_FILE_TYPES = (".pdf", ".docx", ".txt", ".md")
+
 
 @dataclass
 class Document:
@@ -31,10 +37,28 @@ class KnowledgeBase:
     sync_status: Optional[str] = None
 
     def upload_file(self, file_path: Union[str, Path]) -> None:
-        with open(Path(file_path).expanduser().resolve(), "rb") as file:
+        file_path = Path(file_path)
+        suffix = file_path.suffix
+        if suffix not in SUPPORTED_FILE_TYPES:
+            msg = f"{suffix} files are not supported. Supported file types: {SUPPORTED_FILE_TYPES}"
+            raise ValueError(msg)
+
+        file_path = file_path.expanduser().resolve()
+        with open(file_path, "rb") as file:
             files = {"files": (str(file_path), file)}
             data = {"knowledge_base_name": self.name}
             api.post(urls.upload(), data=data, files=files)
+
+    def upload_from_directory(self, directory: Union[str, Path]) -> None:
+        directory = Path(directory).expanduser().resolve()
+        if not directory.is_dir():
+            msg = "You must provide a direcotry"
+            raise ValueError(msg)
+        directory = str(directory)
+        all_files = [os.path.join(directory, file) for file in os.listdir(directory)]
+        files_to_upload = [file for file in all_files if file.endswith(SUPPORTED_FILE_TYPES)]
+        for file_path in files_to_upload:
+            self.upload_file(file_path)
 
     def list_files(self) -> List[Dict[str, Any]]:
         return api.get(urls.knowledge_base_files(self.name))
@@ -53,7 +77,7 @@ class KnowledgeBase:
     @property
     def is_synced(self):
         self.get_info()
-        return self.sync_status == 'SYNCED'
+        return self.sync_status == "SYNCED"
 
 
 def list_knowledge_bases() -> List[KnowledgeBase]:
@@ -101,6 +125,7 @@ class Retriever:
         knowledge_bases (list[KnowledgeBase]): A list of knowledge bases to query.
 
     """
+
     knowledge_bases: List[KnowledgeBase]
 
     def query(self, query: str, output_k: int = 10, *, rerank_pool_size: int = 50, rerank_fast=True) -> List[Document]:
