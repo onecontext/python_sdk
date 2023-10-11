@@ -5,8 +5,8 @@
 
 -----
 **Table of Contents**
-- [LLM Context as a Service](#llm context as s service)
-- [Quick Start](#quick start)
+- [LLM Context as a Service](#llm-context-as-a-service)
+- [Quick Start](#quick-start)
 - [License](#license)
 
 -----
@@ -17,24 +17,22 @@ OneContext makes it easy to augment your LLM application with your own data
 in a few API calls. Simply upload your data to a Knowledge Base and directly
 query with natrual languge to retrieve relevant context for your LLM application.
 
-We manage the full retrieval pipeline so that you don't have to:
+We manage the full document processing and retrieval pipeline so that you don't have to:
 
 - document ingestion, chunking and cleaning
 - effcient vector embeddings at scale using state of the art open source models
 - low latency multi stage query pipeline to provide the most relevant context
 for your LLM application
 
-
 We keep up with the latest research to provide an accurate and fast retrieval pipeline
 based on model evalution and best practice heuristics.
 
-Multi stage query pipeline out of the box:
+### Multi stage query pipeline out of the box:
 - fast base model retrives a large pool of documents
 - cross-encoder reranks the retrived documents to provide the prceise
 results relevant to the query.
 
-
-Use Cases:
+### Use Cases:
 - Question Answering over a large knowledge base
 - Long term memorry for chatbots
 - Runtime context for instruction following agents
