@@ -93,9 +93,9 @@ print(my_knowledge_base.is_synced)
 
 from onecontext import Retriever
 
-retriver = Retriever(knowledge_bases=[my_knowledge_base])
+retriever = Retriever(knowledge_bases=[my_knowledge_base])
 
-documents = retriver.query("what is onecontext?")
+documents = retriever.query("what is onecontext?")
 
 ```
 
