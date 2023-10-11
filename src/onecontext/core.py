@@ -57,15 +57,33 @@ class KnowledgeBase:
 
 
 def list_knowledge_bases() -> List[KnowledgeBase]:
+    """List the available Knowledge Bases"""
     knowledge_base_dicts = api.get(urls.knowledge_base())
     return [KnowledgeBase(**kb) for kb in knowledge_base_dicts]
 
 
 def get_file_metadata(file_id: str) -> Dict[str, Any]:
+    """
+    Fetch the file meta data
+
+    Args:
+        file_id (str): the id of the file (returned with every Document result)
+
+    Returns:
+        dict: the file information, including dowload link, file name and sync status
+    """
     return api.get(urls.files(file_id))
 
 
 def download_file(file_id: str, download_dir: Path) -> None:
+    """
+    Download a file
+
+    Args:
+        file_id (str): the id of the file (returned with every Document result)
+        download_dir (str): the directory to which the file will be downloaded
+
+    """
     file_metadata = get_file_metadata(file_id)
     download_url = file_metadata["download_url"]
     file_path = download_dir / file_metadata["name"]
@@ -76,9 +94,43 @@ def download_file(file_id: str, download_dir: Path) -> None:
 
 @dataclass
 class Retriever:
+    """
+    The query interface to one or more knowledge_bases
+
+    Args:
+        knowledge_bases (list[KnowledgeBase]): A list of knowledge bases to query.
+
+    """
     knowledge_bases: List[KnowledgeBase]
 
     def query(self, query: str, output_k: int = 10, *, rerank_pool_size: int = 50, rerank_fast=True) -> List[Document]:
+        """
+
+        The preffered query method. The query pipline is composed of two stages behind the scenes:
+            1. Fast Retrieval of a larger sample set by our base model
+            2. Cross-Encoder reranking to get the most relevant results
+
+        Note that only the final results are returned by the API. To access the
+        base retrieval model directly use teh query_no_rerank method
+
+        Args:
+            query (str):
+              the query search string, prefer longer senteces and paragraphs
+              for best results
+            output_k (int):
+              the number of result Documents to return
+            rerank_pool_size (int):
+              the initial pool of documents to fetch in stage 1. Higher values
+              increase recall at the cost of latency
+            rerank_fast (bool):
+                set to False to access an experimental more powerful cross-encoder
+                pipeline. Note that this will increase latency and is often
+                not required dependig on the use case. We recommend evaluating
+                the default pipeline first .
+
+        Returns:
+            list[Document] : the most relevant document chunks
+        """
         params = {
             "query": query,
             "output_k": output_k,
@@ -91,6 +143,22 @@ class Retriever:
         return self._post_query(params)
 
     def query_no_rerank(self, query: str, output_k: int = 10) -> List[Document]:
+        """
+        A simple single stage retrieval query.
+
+        Use this method to fetch a large number of Documents with the lowest latecy.
+        Accuracy is lower thant the defaul query method with cross-encoder.
+
+        Args:
+            query (str):
+              the query search string, prefer longer senteces and paragraphs
+              for best results
+            output_k (int):
+              the number of result Documents to return
+        Returns:
+            list[Document] : the most relevant document chunks
+
+        """
         params = {
             "query": query,
             "output_k": output_k,
