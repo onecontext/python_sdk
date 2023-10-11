@@ -49,7 +49,7 @@ pip install onecontext
 
     export ONECONTEXT_API_KEY="YOUR_API_KEY"
 
-You can get the api key for free at  [OneContext](www.onecontext.ai)
+You can get the api key for free at  [OneContext](https://www.onecontext.ai)
 
 ### Usage
 
@@ -109,7 +109,6 @@ retriver = Retriever(knowledge_bases=[my_knowledge_base])
 documents = retriver.query("what is onecontext?")
 
 ```
-
 
 ## License
 
