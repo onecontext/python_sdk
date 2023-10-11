@@ -4,32 +4,58 @@
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/onecontext.svg)](https://pypi.org/project/onecontext)
 
 -----
-
 **Table of Contents**
-
-- [Installation](#installation)
+- [LLM Context as a Service](#llm context as s service)
+- [Quick Start](#quick start)
 - [License](#license)
 
-## Installation
+-----
+
+## LLM Context as a Service
+
+OneContext makes it easy to augment your LLM application with your own data
+in a few API calls. Simply upload your data to a Knowledge Base and directly
+query with natrual languge to retrieve relevant context for your LLM application.
+
+We manage the full retrieval pipeline so that you don't have to:
+
+- document ingestion, chunking and cleaning
+- effcient vector embeddings at scale using state of the art open source models
+- low latency multi stage query pipeline to provide the most relevant context
+for your LLM application
+
+
+We keep up with the latest research to provide an accurate and fast retrieval pipeline
+based on model evalution and best practice heuristics.
+
+Multi stage query pipeline out of the box:
+- fast base model retrives a large pool of documents
+- cross-encoder reranks the retrived documents to provide the prceise
+results relevant to the query.
+
+
+Use Cases:
+- Question Answering over a large knowledge base
+- Long term memorry for chatbots
+- Runtime context for instruction following agents
+- Prevent and detect hallucinations based on custom data
+
+
+## Quick Start
 
 ```console
 pip install onecontext
 ```
 
-## License
-
-`onecontext` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
-
-
-## Configuration
+### Configuration
 
     export ONECONTEXT_API_KEY="YOUR_API_KEY"
 
 You can get the api key for free at  [OneContext](www.onecontext.ai)
 
-## Usage
+### Usage
 
-### Create a Knowledge Base:
+#### Create a Knowledge Base:
 
 ```python
 from onecontext import KnowledgeBase
@@ -40,7 +66,7 @@ my_knowledge_base.create()
 
 ```
 
-### Upload files to the Knowledge Base:
+#### Upload files to the Knowledge Base:
 
 ```python
 
@@ -74,7 +100,7 @@ Check sync status:
 print(my_knowledge_base.is_synced)
 ```
 
-### Query the Knowledge Base
+#### Query the Knowledge Base
 
 ```python
 
@@ -85,3 +111,10 @@ retriver = Retriever(knowledge_bases=[my_knowledge_base])
 documents = retriver.query("what is onecontext?")
 
 ```
+
+
+## License
+
+`onecontext` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
+
+
