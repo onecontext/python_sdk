@@ -15,7 +15,7 @@
 
 OneContext makes it easy to augment your LLM application with your own data
 in a few API calls. Simply upload your data to a Knowledge Base and directly
-query with natrual languge to retrieve relevant context for your LLM application.
+query with natural languge to retrieve relevant context for your LLM application.
 
 We manage the full document processing and retrieval pipeline so that you don't have to:
 
@@ -28,8 +28,8 @@ We keep up with the latest research to provide an accurate and fast retrieval pi
 based on model evalution and best practice heuristics.
 
 ### Multi stage query pipeline out of the box:
-- fast base model retrives a large pool of documents
-- cross-encoder reranks the retrived documents to provide the prceise
+- Fast base-model retrieves a large pool of documents
+- Cross-encoder reranks the retrieved documents to provide the precise
 results relevant to the query.
 
 ### Use Cases:
@@ -75,7 +75,7 @@ my_knowledge_base = KnowledgeBase("my_knowledge_base")
 
 directory = "/path/to/local_folder"
 
-my_knowledge_base.upload_from_directory((folder)
+my_knowledge_base.upload_from_directory(directory)
 ```
 
 Once the files have been uploaded they will be processed, chunked
