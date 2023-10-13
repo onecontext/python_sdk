@@ -64,6 +64,16 @@ my_knowledge_base.create()
 
 ```
 
+#### List Knowledge Bases
+
+
+```python
+from onecontext import list_knowledge_bases
+
+print(list_knowledge_bases())
+
+```
+
 #### Upload files to the Knowledge Base:
 
 ```python
@@ -89,18 +99,39 @@ print(my_knowledge_base.is_synced)
 
 #### Query the Knowledge Base
 
+
 ```python
 
 from onecontext import Retriever
 
 retriever = Retriever(knowledge_bases=[my_knowledge_base])
 
-documents = retriever.query("what is onecontext?")
+documents = retriever.query("what is onecontext?", output_k=20)
+
+```
+
+By default the query pipeline is composed of two steps:
+
+- Retrieval: fetch the larger pool of documents (rerank_pool_size)
+- Re-ranking: re-rank the results with a downstream model to get most relevant documents
+
+To improve recall you can increase the rerank_pool_size:
+
+```python
+
+documents = retriever.query("what is onecontext?", output_k=10, rerank_pool_size=80)
+
+```
+
+You can also skip the re-ranking step entirely:
+
+```python
+
+documents = retriever.query_no_rerank("what is onecontext?")
 
 ```
 
 ## License
 
 `onecontext` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
-
 
