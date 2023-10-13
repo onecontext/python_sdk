@@ -94,7 +94,7 @@ def get_file_metadata(file_id: str) -> Dict[str, Any]:
         file_id (str): the id of the file (returned with every Document result)
 
     Returns:
-        dict: the file information, including dowload link, file name and sync status
+        dict: the file information, including download link, file name and sync status
     """
     return api.get(urls.files(file_id))
 
@@ -131,16 +131,16 @@ class Retriever:
     def query(self, query: str, output_k: int = 10, *, rerank_pool_size: int = 50, rerank_fast=True) -> List[Document]:
         """
 
-        The preffered query method. The query pipline is composed of two stages behind the scenes:
+        The preferred query method. The query pipeline is composed of two stages behind the scenes:
             1. Fast Retrieval of a larger sample set by our base model
-            2. Cross-Encoder reranking to get the most relevant results
+            2. Cross-Encoder re ranking to get the most relevant results
 
         Note that only the final results are returned by the API. To access the
-        base retrieval model directly use teh query_no_rerank method
+        base retrieval model directly use the query_no_rerank method
 
         Args:
             query (str):
-              the query search string, prefer longer senteces and paragraphs
+              the query search string, prefer longer sentences and paragraphs
               for best results
             output_k (int):
               the number of result Documents to return
@@ -150,7 +150,7 @@ class Retriever:
             rerank_fast (bool):
                 set to False to access an experimental more powerful cross-encoder
                 pipeline. Note that this will increase latency and is often
-                not required dependig on the use case. We recommend evaluating
+                not required depending on the use case. We recommend evaluating
                 the default pipeline first .
 
         Returns:
@@ -171,12 +171,12 @@ class Retriever:
         """
         A simple single stage retrieval query.
 
-        Use this method to fetch a large number of Documents with the lowest latecy.
-        Accuracy is lower thant the defaul query method with cross-encoder.
+        Use this method to fetch a large number of Documents with the lowest latency.
+        Accuracy is lower than the default query method with cross-encoder.
 
         Args:
             query (str):
-              the query search string, prefer longer senteces and paragraphs
+              the query search string, prefer longer sentences and paragraphs
               for best results
             output_k (int):
               the number of result Documents to return
