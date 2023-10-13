@@ -78,9 +78,6 @@ print(list_knowledge_bases())
 
 ```python
 
-import os
-from pathlib import Path
-
 my_knowledge_base = KnowledgeBase("my_knowledge_base")
 
 directory = "/path/to/local_folder"
