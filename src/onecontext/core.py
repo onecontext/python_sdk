@@ -101,7 +101,7 @@ def get_file_metadata(file_id: str) -> Dict[str, Any]:
 
 def download_file(file_id: str, download_dir: Path) -> None:
     """
-    Download a fil
+    Download a file
 
     Args:
         file_id (str): the id of the file (returned with every Document result)
@@ -131,7 +131,7 @@ class Retriever:
     def query(self, query: str, output_k: int = 10, *, rerank_pool_size: int = 50, rerank_fast=True) -> List[Document]:
         """
 
-        The proffered query method. The query pipeline is composed of two stages behind the scenes:
+        The preferred query method. The query pipeline is composed of two stages behind the scenes:
             1. Fast Retrieval of a larger sample set by our base model
             2. Cross-Encoder re ranking to get the most relevant results
 
