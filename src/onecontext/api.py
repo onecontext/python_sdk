@@ -43,7 +43,7 @@ class ApiClient:
             self.api_key = os.environ.get("ONECONTEXT_API_KEY")
 
         if self.api_key is None:
-            msg = "CONTEXT_API_KEY is not set in environment or pass as an argument"
+            msg = "ONECONTEXT_API_KEY not found in environment variables."
             raise ConfigurationError(msg)
 
         self.session = requests.Session()
