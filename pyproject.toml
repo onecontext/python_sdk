@@ -2,11 +2,16 @@
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.hatch.build]
-include = [
-  "src/*",
-  "README",
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+  "/.github",
+  "/docs",
+  "example.py",
+  "*env*",
+  "tests"
 ]
+
 
 
 [project]
