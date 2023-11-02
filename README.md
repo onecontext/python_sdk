@@ -76,13 +76,31 @@ print(list_knowledge_bases())
 
 #### Upload files to the Knowledge Base:
 
+
 ```python
 
 my_knowledge_base = KnowledgeBase("my_knowledge_base")
 
+file_path = "/path/to/file.pdf"
+
+my_knowledge_base.upload_file(file_path)
+```
+
+You can add custom key, value metadata to the file that can be used to filter
+at query time:
+
+```python
+my_knowledge_base.upload_file(file_path, metadata={"category" : "legal"})
+my_knowledge_base.upload_file(another_file_path, metadata={"category" : "finance"})
+```
+
+Uploading files from a directory:
+
+```python
+
 directory = "/path/to/local_folder"
 
-my_knowledge_base.upload_from_directory(directory)
+my_knowledge_base.upload_from_directory(directory, metadata={"category" : "legal"})
 ```
 
 Once the files have been uploaded they will be processed, chunked
