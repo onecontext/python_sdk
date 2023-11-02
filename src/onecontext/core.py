@@ -128,6 +128,12 @@ class Retriever:
 
     knowledge_bases: List[KnowledgeBase]
 
+    def __post_init__(self):
+
+        for knowledge_base in self.knowledge_bases:
+            if not isinstance(knowledge_base, KnowledgeBase):
+                raise ValueError(f"knowledge_bases parameter should be a list of KnowledgeBase, recieved {type(knowledge_base)} instead.")
+
     def query(self, query: str, output_k: int = 10, *, rerank_pool_size: int = 50, rerank_fast=True) -> List[Document]:
         """
 
