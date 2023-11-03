@@ -76,7 +76,7 @@ class KnowledgeBase:
         else:
             metadata = [metadata] * len(files_to_upload)
 
-        for file_path in zip(files_to_upload, metadata):
+        for file_path, metadata in zip(files_to_upload, metadata):
             self.upload_file(file_path, metadata)
 
     def list_files(self) -> List[Dict[str, Any]]:
