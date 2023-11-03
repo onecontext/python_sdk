@@ -13,8 +13,8 @@
 
 ## LLM Context as a Service
 
-OneContext makes it easy to augment your LLM application with your own data
-in a few API calls. Simply upload your data to a Knowledge Base and directly
+OneContext makes it really easy and fast to augment your LLM application with your own data
+in a few API calls. Upload your data to a `Knowledge Base` and directly it
 query with natural languge to retrieve relevant context for your LLM application.
 
 We manage the full document processing and retrieval pipeline so that you don't have to:
