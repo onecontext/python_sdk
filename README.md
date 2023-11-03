@@ -49,7 +49,7 @@ pip install onecontext
 
     export ONECONTEXT_API_KEY="YOUR_API_KEY"
 
-You can get the api key for free at  [OneContext](https://www.onecontext.ai)
+You can get an api key by joining our closed beta. Email Ross at ross@onecontext.ai to get on the list.
 
 ### Usage
 
@@ -76,14 +76,43 @@ print(list_knowledge_bases())
 
 #### Upload files to the Knowledge Base:
 
+You can upload an entire directory like this:
+
 ```python
 
-my_knowledge_base = KnowledgeBase("my_knowledge_base")
+my_kb = KnowledgeBase("my_knowledge_base")
 
-directory = "/path/to/local_folder"
+directory = "/path/to/local_directory"
 
-my_knowledge_base.upload_from_directory(directory)
+my_kb.upload_from_directory(directory)
 ```
+
+Or, you can upload an individual file like this:
+
+```python
+
+my_kb = KnowledgeBase("my_knowledge_base")
+
+my_kb.upload_file(
+    "/path/to/local_file.pdf"
+)
+
+```
+
+If you like, you can also add metadata to your files. This makes it really easy to filter your query-space later on. Metadata can be any key-value pairs, passed as a dictionary. For example:
+
+```python
+
+my_kb = KnowledgeBase("my_knowledge_base")
+
+my_kb.upload_file(
+    "/path/to/local_file.pdf", metadata={"ContainsPII": True, "author": "ross", "description": "passport", "file-type": "scan", "category": "personal"}
+)
+
+```
+
+Currently, you can upload any of [.pdf, .docx, .txt] files. Don't worry if the PDF is a scan (and doesn't have easily extractable text), OneContext will figure it out via OCR.
+In the near future you'll be able to upload video, audio, and connect to multiple file-storage platforms. 
 
 Once the files have been uploaded they will be processed, chunked
 and embedded by OneContext.
@@ -101,11 +130,24 @@ print(my_knowledge_base.is_synced)
 
 from onecontext import Retriever
 
-retriever = Retriever(knowledge_bases=[my_knowledge_base])
+retriever = Retriever(knowledge_bases=[my_kb])
 
 documents = retriever.query("what is onecontext?", output_k=20)
 
 ```
+
+And, filtering by metadata: 
+
+```python
+
+from onecontext import Retriever
+
+retriever = Retriever(knowledge_bases=[my_kb])
+
+documents = retriever.query("what is onecontext?", output_k=20, metadata_filters={"ContainsPII": True, "author": "ross"})
+
+```
+
 
 By default the query pipeline is composed of two steps:
 
@@ -120,7 +162,7 @@ documents = retriever.query("what is onecontext?", output_k=10, rerank_pool_size
 
 ```
 
-You can also skip the re-ranking step entirely:
+You can also skip the re-ranking step entirely if you want to prioritise speed over accuracy of results.
 
 ```python
 
