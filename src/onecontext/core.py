@@ -38,8 +38,13 @@ class KnowledgeBase:
     sync_status: Optional[str] = None
 
     def upload_file(self, file_path: Union[str, Path], metadata: Optional[dict] = None) -> None:
-
         if metadata is not None:
+            if any(
+                key in metadata.keys()
+                for key in ["file_name", "knowledge_base", "user_id", "namespace", "file_path", "file_id"]
+            ):
+                msg = '"file_name", "knowledge_base", "user_id", "namespace", "file_path", and "file_id" are reserved keys in metadata. Please try another key value!'
+                raise ValueError(msg)
             metadata_json = json.dumps(metadata)
         else:
             metadata_json = None
@@ -61,7 +66,9 @@ class KnowledgeBase:
 
             api.post(urls.upload(), data=data, files=files)
 
-    def upload_from_directory(self, directory: Union[str, Path], metadata: Optional[Union[dict, List[dict]]] = None) -> None:
+    def upload_from_directory(
+        self, directory: Union[str, Path], metadata: Optional[Union[dict, List[dict]]] = None
+    ) -> None:
         directory = Path(directory).expanduser().resolve()
         if not directory.is_dir():
             msg = "You must provide a direcotry"
@@ -148,12 +155,21 @@ class Retriever:
     knowledge_bases: List[KnowledgeBase]
 
     def __post_init__(self):
-
         for knowledge_base in self.knowledge_bases:
             if not isinstance(knowledge_base, KnowledgeBase):
-                raise TypeError(f"knowledge_bases parameter should be a list of KnowledgeBase, recieved {type(knowledge_base)} instead.")
+                raise TypeError(
+                    f"knowledge_bases parameter should be a list of KnowledgeBase, recieved {type(knowledge_base)} instead."
+                )
 
-    def query(self, query: str, output_k: int = 10, *, rerank_pool_size: int = 50, rerank_fast=True, metadata_filters: Optional[Dict] = None) -> List[Document]:
+    def query(
+        self,
+        query: str,
+        output_k: int = 10,
+        *,
+        rerank_pool_size: int = 50,
+        rerank_fast=True,
+        metadata_filters: Optional[Dict] = None,
+    ) -> List[Document]:
         """
 
         The preferred query method. The query pipeline is composed of two stages behind the scenes:
@@ -200,7 +216,7 @@ class Retriever:
             "rerank_pool_size": rerank_pool_size,
             "rerank_fast": rerank_fast,
             "rerank": True,
-            "metadata_filters": metadata_filters
+            "metadata_filters": metadata_filters,
         }
         return self._post_query(params)
 
