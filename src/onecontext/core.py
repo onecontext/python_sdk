@@ -1,4 +1,5 @@
 import os
+import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
@@ -36,20 +37,31 @@ class KnowledgeBase:
     id: Optional[str] = None
     sync_status: Optional[str] = None
 
-    def upload_file(self, file_path: Union[str, Path]) -> None:
+    def upload_file(self, file_path: Union[str, Path], metadata: Optional[dict] = None) -> None:
+
+        if metadata is not None:
+            metadata_json = json.dumps(metadata)
+        else:
+            metadata_json = None
+
         file_path = Path(file_path)
         suffix = file_path.suffix
+
         if suffix not in SUPPORTED_FILE_TYPES:
             msg = f"{suffix} files are not supported. Supported file types: {SUPPORTED_FILE_TYPES}"
             raise ValueError(msg)
 
         file_path = file_path.expanduser().resolve()
+
         with open(file_path, "rb") as file:
             files = {"files": (str(file_path), file)}
             data = {"knowledge_base_name": self.name}
+            if metadata_json:
+                data.update({"metadata_json": metadata_json})
+
             api.post(urls.upload(), data=data, files=files)
 
-    def upload_from_directory(self, directory: Union[str, Path]) -> None:
+    def upload_from_directory(self, directory: Union[str, Path], metadata: Optional[Union[dict, List[dict]]] = None) -> None:
         directory = Path(directory).expanduser().resolve()
         if not directory.is_dir():
             msg = "You must provide a direcotry"
@@ -57,8 +69,15 @@ class KnowledgeBase:
         directory = str(directory)
         all_files = [os.path.join(directory, file) for file in os.listdir(directory)]
         files_to_upload = [file for file in all_files if file.endswith(SUPPORTED_FILE_TYPES)]
-        for file_path in files_to_upload:
-            self.upload_file(file_path)
+
+        if isinstance(metadata, list):
+            if len(metadata) != len(files_to_upload):
+                raise ValueError("Metadata list len does not match the number of files in directory")
+        else:
+            metadata = [metadata] * len(files_to_upload)
+
+        for file_path, metadata in zip(files_to_upload, metadata):
+            self.upload_file(file_path, metadata)
 
     def list_files(self) -> List[Dict[str, Any]]:
         return api.get(urls.knowledge_base_files(self.name))
@@ -132,9 +151,9 @@ class Retriever:
 
         for knowledge_base in self.knowledge_bases:
             if not isinstance(knowledge_base, KnowledgeBase):
-                raise ValueError(f"knowledge_bases parameter should be a list of KnowledgeBase, recieved {type(knowledge_base)} instead.")
+                raise TypeError(f"knowledge_bases parameter should be a list of KnowledgeBase, recieved {type(knowledge_base)} instead.")
 
-    def query(self, query: str, output_k: int = 10, *, rerank_pool_size: int = 50, rerank_fast=True) -> List[Document]:
+    def query(self, query: str, output_k: int = 10, *, rerank_pool_size: int = 50, rerank_fast=True, metadata_filters: Optional[Dict] = None) -> List[Document]:
         """
 
         The preferred query method. The query pipeline is composed of two stages behind the scenes:
@@ -158,7 +177,19 @@ class Retriever:
                 pipeline. Note that this will increase latency and is often
                 not required depending on the use case. We recommend evaluating
                 the default pipeline first .
+            metadata_filters (dict):
+                used to filter the query based on metadata provided at file
+                upload.
+                eg:
+                    {"category" : "legal"}
+                will restrict the query to files with a "category" key
+                matching "legal" value
 
+                to filter the search to multiple values pass a list instead:
+                    {"category" : ["legal", "finance"]
+
+                Note: "file_name" filter is available by default. Be sure
+                to provide the full file name including the extension.
         Returns:
             list[Document] : the most relevant document chunks
         """
@@ -169,8 +200,8 @@ class Retriever:
             "rerank_pool_size": rerank_pool_size,
             "rerank_fast": rerank_fast,
             "rerank": True,
+            "metadata_filters": metadata_filters
         }
-
         return self._post_query(params)
 
     def query_no_rerank(self, query: str, output_k: int = 10) -> List[Document]:
