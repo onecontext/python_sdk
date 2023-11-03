@@ -61,7 +61,7 @@ class KnowledgeBase:
 
             api.post(urls.upload(), data=data, files=files)
 
-    def upload_from_directory(self, directory: Union[str, Path]) -> None:
+    def upload_from_directory(self, directory: Union[str, Path], metadata: Optional[Union[dict, List[dict]]] = None) -> None:
         directory = Path(directory).expanduser().resolve()
         if not directory.is_dir():
             msg = "You must provide a direcotry"
@@ -69,8 +69,15 @@ class KnowledgeBase:
         directory = str(directory)
         all_files = [os.path.join(directory, file) for file in os.listdir(directory)]
         files_to_upload = [file for file in all_files if file.endswith(SUPPORTED_FILE_TYPES)]
-        for file_path in files_to_upload:
-            self.upload_file(file_path)
+
+        if isinstance(metadata, list):
+            if len(metadata) != len(files_to_upload):
+                raise ValueError("Metadata list len does not match the number of files in directory")
+        else:
+            metadata = [metadata] * len(files_to_upload)
+
+        for file_path in zip(files_to_upload, metadata):
+            self.upload_file(file_path, metadata)
 
     def list_files(self) -> List[Dict[str, Any]]:
         return api.get(urls.knowledge_base_files(self.name))
@@ -144,7 +151,7 @@ class Retriever:
 
         for knowledge_base in self.knowledge_bases:
             if not isinstance(knowledge_base, KnowledgeBase):
-                raise ValueError(f"knowledge_bases parameter should be a list of KnowledgeBase, recieved {type(knowledge_base)} instead.")
+                raise TypeError(f"knowledge_bases parameter should be a list of KnowledgeBase, recieved {type(knowledge_base)} instead.")
 
     def query(self, query: str, output_k: int = 10, *, rerank_pool_size: int = 50, rerank_fast=True, metadata_filters: Optional[Dict] = None) -> List[Document]:
         """
