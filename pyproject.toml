@@ -8,10 +8,11 @@ exclude = [
   "/.github",
   "/docs",
   "example.py",
+  ".idea",
+  "scratch.py",
   "*env*",
   "tests"
 ]
-
 
 
 [project]
@@ -24,7 +25,7 @@ license = "MIT"
 keywords = []
 authors = [
   { name = "Serge Mosesov", email = "smosesov@gmail.com" },
-  { name = "Ross Murphy", email = "ross@gmail.com" },
+  { name = "Ross Murphy", email = "ross.a.murphy@gmail.com" },
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
