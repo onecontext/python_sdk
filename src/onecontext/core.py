@@ -1,6 +1,6 @@
 import os
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
@@ -25,17 +25,36 @@ class Document:
 
 
 @dataclass
+class ChunkParams:
+    """Chunking Params to customise the chunking algorithm.
+
+    Args:
+        split_size_words int: the number of words to split on
+        split_size_overlap int: the overlap in words between chunks
+        split_on_sentence bool: whether to respect sentences boundaries
+        max_chars_hard_stop int: only applies if split_on_sentence, hard stop in chars if sentence boundary is not found
+    """
+    split_size_words: Optional[int] = None
+    split_size_overlap:  Optional[int] = None
+    split_on_sentence: Optional[bool] = None
+    max_chars_hard_stop: Optional[int] = None
+
+
+@dataclass
 class KnowledgeBase:
     """The KnowledgeBase class provides api access to a given knowledge base.
     knowledge bases names must unique.
 
     Args:
         name (str): The name of the knowledge bases
+        id (str): the id, this will be returned by the api
+        sync_status (bool): the current sync status, this will be returned by the api
     """
 
     name: str
     id: Optional[str] = None
     sync_status: Optional[str] = None
+    chunk_params: Optional[ChunkParams] = None
 
     def upload_file(self, file_path: Union[str, Path], metadata: Optional[dict] = None) -> None:
         if metadata is not None:
@@ -94,8 +113,13 @@ class KnowledgeBase:
         self.sync_status = info["sync_status"]
         self.id = info["id"]
 
-    def create(self) -> None:
-        api.post(urls.knowledge_base(self.name))
+    def create(self, chunk_params: ChunkParams| None) -> None:
+        params = {"name" : name}
+
+        if chunk_params is not None:
+            params.update(asdict(chunk_params))
+
+        api.post(urls.knowledge_base(), json=params)
 
     def delete(self) -> None:
         api.delete(urls.knowledge_base(self.name))
@@ -170,8 +194,8 @@ class Retriever:
         rerank_fast=True,
         metadata_filters: Optional[Dict] = None,
     ) -> List[Document]:
-        """
 
+        """
         The preferred query method. The query pipeline is composed of two stages behind the scenes:
             1. Fast Retrieval of a larger sample set by our base model
             2. Cross-Encoder re ranking to get the most relevant results
