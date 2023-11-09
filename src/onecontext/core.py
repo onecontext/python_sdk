@@ -113,11 +113,11 @@ class KnowledgeBase:
         self.sync_status = info["sync_status"]
         self.id = info["id"]
 
-    def create(self, chunk_params: ChunkParams| None) -> None:
-        params = {"name" : name}
+    def create(self, chunk_params: ChunkParams| None = None) -> None:
 
+        params = {"name" : self.name}
         if chunk_params is not None:
-            params.update(asdict(chunk_params))
+            params["chunk_params"] = asdict(chunk_params)
 
         api.post(urls.knowledge_base(), json=params)
 
