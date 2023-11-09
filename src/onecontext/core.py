@@ -29,10 +29,10 @@ class ChunkParams:
     """Chunking Params to customise the chunking algorithm.
 
     Args:
-        split_size_words int: the number of words to split on
-        split_size_overlap int: the overlap in words between chunks
-        split_on_sentence bool: whether to respect sentences boundaries
-        max_chars_hard_stop int: only applies if split_on_sentence, hard stop in chars if sentence boundary is not found
+        split_size_words (int): the number of words to split on
+        split_size_overlap (int): the overlap in words between chunks
+        split_on_sentence (bool): whether to respect sentences boundaries
+        max_chars_hard_stop (int): only applies if split_on_sentence, hard stop in chars if sentence boundary is not found
     """
     split_size_words: Optional[int] = None
     split_size_overlap:  Optional[int] = None

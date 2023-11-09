@@ -112,7 +112,7 @@ my_kb.upload_file(
 ```
 
 Currently, you can upload any of [.pdf, .docx, .txt] files. Don't worry if the PDF is a scan (and doesn't have easily extractable text), OneContext will figure it out via OCR.
-In the near future you'll be able to upload video, audio, and connect to multiple file-storage platforms. 
+In the near future you'll be able to upload video, audio, and connect to multiple file-storage platforms.
 
 Once the files have been uploaded they will be processed, chunked
 and embedded by OneContext.
@@ -136,7 +136,7 @@ documents = retriever.query("what is onecontext?", output_k=20)
 
 ```
 
-And, filtering by metadata: 
+And, filtering by metadata:
 
 ```python
 
@@ -167,6 +167,20 @@ You can also skip the re-ranking step entirely if you want to prioritise speed o
 ```python
 
 documents = retriever.query_no_rerank("what is onecontext?")
+
+```
+
+##### Custom Chunking Pipeline
+
+```python
+from onecontext import KnowledgeBase, ChunkParams
+
+my_knowledge_base = KnowledgeBase("my_knowledge_base")
+
+chunk_params = ChunkParams(split_size_words=100)
+
+my_knowledge_base.create(chunk_params=chunk_params)
+
 
 ```
 
