@@ -39,6 +39,13 @@ class ChunkParams:
     split_on_sentence: Optional[bool] = None
     max_chars_hard_stop: Optional[int] = None
 
+@dataclass
+class ScoreParams:
+    model_name: str
+
+@dataclass
+class ClusterParams:
+    model_name: str
 
 @dataclass
 class KnowledgeBase:
@@ -55,6 +62,8 @@ class KnowledgeBase:
     id: Optional[str] = None
     sync_status: Optional[str] = None
     chunk_params: Optional[ChunkParams] = None
+    score_params: Optional[ScoreParams] = None
+    cluster_params: Optional[ClusterParams] = None
 
     def upload_file(self, file_path: Union[str, Path], metadata: Optional[dict] = None) -> None:
         if metadata is not None:
@@ -113,13 +122,9 @@ class KnowledgeBase:
         self.sync_status = info["sync_status"]
         self.id = info["id"]
 
-    def create(self, chunk_params: ChunkParams| None = None) -> None:
-
-        params = {"name" : self.name}
-        if chunk_params is not None:
-            params["chunk_params"] = asdict(chunk_params)
-
-        api.post(urls.knowledge_base(), json=params)
+    def create(self) -> None:
+        data = asdict(self)
+        api.post(urls.knowledge_base(), json=data)
 
     def delete(self) -> None:
         api.delete(urls.knowledge_base(self.name))
@@ -272,3 +277,15 @@ class Retriever:
     def _post_query(self, params: Dict[str, Any]) -> List[Document]:
         results = api.post(urls.query(), json=params)
         return [Document(**document) for document in results["documents"]]
+
+def wait_for_sync(kb, verbose=False):
+    import time
+    while not kb.is_synced:
+        syncing = filter(lambda f : f['has_embedding'] == False, kb.list_files())
+        message = [f"Syncing: {file['name']}" for file in syncing]
+        if verbose:
+            print("\n".join(message), end="\r")
+        time.sleep(3)
+    if verbose:
+        print("\nDone")
+
