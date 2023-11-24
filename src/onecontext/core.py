@@ -48,6 +48,10 @@ class ClusterParams:
     model_name: str
 
 @dataclass
+class FileIndexingConfig:
+    punctuate: bool
+
+@dataclass
 class KnowledgeBase:
     """The KnowledgeBase class provides api access to a given knowledge base.
     knowledge bases names must unique.
@@ -65,17 +69,10 @@ class KnowledgeBase:
     score_params: Optional[ScoreParams] = None
     cluster_params: Optional[ClusterParams] = None
 
-    def upload_file(self, file_path: Union[str, Path], metadata: Optional[dict] = None) -> None:
-        if metadata is not None:
-            if any(
-                key in metadata.keys()
-                for key in ["file_name", "knowledge_base", "user_id", "namespace", "file_path", "file_id"]
-            ):
-                msg = '"file_name", "knowledge_base", "user_id", "namespace", "file_path", and "file_id" are reserved keys in metadata. Please try another key value!'
-                raise ValueError(msg)
-            metadata_json = json.dumps(metadata)
-        else:
-            metadata_json = None
+    def upload_file(self, file_path: Union[str, Path], metadata: Optional[dict] = None, file_indexing_config: Optional[FileIndexingConfig] = None) -> None:
+        metadata_json = json.dumps(metadata) if metadata else None
+
+        file_indexing_config_json = json.dumps(asdict(file_indexing_config)) if file_indexing_config else None
 
         file_path = Path(file_path)
         suffix = file_path.suffix
@@ -91,6 +88,9 @@ class KnowledgeBase:
             data = {"knowledge_base_name": self.name}
             if metadata_json:
                 data.update({"metadata_json": metadata_json})
+
+            if file_indexing_config_json:
+                data.update({"file_indexing_config_json": file_indexing_config_json})
 
             api.post(urls.upload(), data=data, files=files)
 
